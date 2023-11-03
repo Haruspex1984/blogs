@@ -1,13 +1,13 @@
 package fr.brenard.blogs.services;
 
-import fr.brenard.blogs.models.entities.User;
-import org.springframework.stereotype.Service;
+import fr.brenard.blogs.models.DTOs.UserDTO;
+
 
 import java.util.List;
 
 public interface UserService {
 
-    List<User> getAll();
+    List<UserDTO> getAll();
 
 
 }

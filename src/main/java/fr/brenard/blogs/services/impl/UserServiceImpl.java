@@ -1,6 +1,8 @@
 package fr.brenard.blogs.services.impl;
 
-import fr.brenard.blogs.models.entities.User;
+import fr.brenard.blogs.models.DTOs.UserDTO;
+
+import fr.brenard.blogs.models.mappers.UserMapper;
 import fr.brenard.blogs.repositories.UserRepository;
 import fr.brenard.blogs.services.UserService;
 import org.springframework.stereotype.Service;
@@ -18,7 +20,7 @@ public class UserServiceImpl implements UserService {
 
 
     @Override
-    public List<User> getAll() {
-        return userRepository.findAll();
+    public List<UserDTO> getAll() {
+        return userRepository.findAll().stream().map(UserMapper::fromEntity).toList();
     }
 }

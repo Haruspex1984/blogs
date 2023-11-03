@@ -2,11 +2,10 @@ package fr.brenard.blogs.models.entities;
 
 
 import jakarta.persistence.*;
-import jakarta.validation.constraints.Email;
-import jakarta.validation.constraints.NotNull;
-import jakarta.validation.constraints.Size;
 import lombok.Getter;
 import lombok.Setter;
+
+import java.util.Date;
 
 @Entity
 @Getter
@@ -24,6 +23,9 @@ public class User {
 
     @Column(name = "email_address",nullable = false, unique = true)
     private String emailAddress;
+
+    @Column(name = "register_date",nullable = false)
+    private Date registerDate;
 
 
 
