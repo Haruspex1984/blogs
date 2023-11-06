@@ -2,6 +2,7 @@ package fr.brenard.blogs.controllers;
 
 import fr.brenard.blogs.models.DTOs.UserDTO;
 import fr.brenard.blogs.services.UserService;
+import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
@@ -22,6 +23,13 @@ public class UserController {
     public List<UserDTO> getAll(){
         return userService.getAll();
     }
+
+    @RequestMapping("/{id}")
+    public UserDTO getUserById(@PathVariable Long id){
+        return userService.getUserById(id);
+    }
+
+
 
 
 }
