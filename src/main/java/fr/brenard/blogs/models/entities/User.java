@@ -7,6 +7,7 @@ import lombok.Setter;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
 
+import java.time.LocalDate;
 import java.util.Collection;
 import java.util.Date;
 
@@ -31,8 +32,11 @@ public class User implements UserDetails {
     private String emailAddress;
 
     @Column(name = "register_date",nullable = false)
-    private Date registerDate;
+    private LocalDate registerDate;
 
+    @OneToOne(orphanRemoval = true)
+    @JoinColumn(name = "blog_id")
+    private Blog blog;
 
     @Override
     public Collection<? extends GrantedAuthority> getAuthorities() {
