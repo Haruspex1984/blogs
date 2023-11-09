@@ -1,5 +1,6 @@
 package fr.brenard.blogs.models.DTOs;
 
+import fr.brenard.blogs.models.entities.Blog;
 import lombok.*;
 
 import java.time.LocalDate;
@@ -13,5 +14,6 @@ public class UserDTO {
     private String username;
     private String emailAddress;
     private LocalDate registerDate;
+    private BlogDTO blogDTO;
 
 }

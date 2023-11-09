@@ -11,6 +11,7 @@ public class UserMapper {
                 .username(entity.getUsername())
                 .emailAddress(entity.getEmailAddress())
                 .registerDate(entity.getRegisterDate())
+                .blogDTO(BlogMapper.fromEntity(entity.getBlog()))
                 .build();
     }
 

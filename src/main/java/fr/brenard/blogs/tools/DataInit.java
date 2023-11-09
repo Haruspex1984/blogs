@@ -28,9 +28,9 @@ public class DataInit implements InitializingBean {
     @Override
     public void afterPropertiesSet() throws Exception {
 
-        Blog blog = new Blog();
-        blog.setTitle("Le blog de Benjamin");
-        blog.setCreationDate(LocalDate.now());
+//        Blog blog = new Blog();
+//        blog.setTitle("Le blog de Benjamin");
+//        blog.setCreationDate(LocalDate.now());
 
         User user = new User();
         user.setUsername("Haruspex");
@@ -39,9 +39,9 @@ public class DataInit implements InitializingBean {
         user.setRegisterDate(LocalDate.now());
 
         user = userRepository.save(user);
-        blog.setUser(user);
-        blog = blogRepository.save(blog);
-        user.setBlog(blog);
+//        blog.setUser(user);
+//        blog = blogRepository.save(blog);
+//        user.setBlog(blog);
         userRepository.save(user);
 
 

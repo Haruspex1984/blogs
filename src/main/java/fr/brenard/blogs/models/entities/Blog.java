@@ -23,8 +23,7 @@ public class Blog {
     @Column(name = "creation_date", nullable = false)
     private LocalDate creationDate;
 
-    @OneToOne(orphanRemoval = true)
-    @JoinColumn(name = "user_id")
+    @OneToOne(mappedBy = "blog", orphanRemoval = true)
     private User user;
 
 }
