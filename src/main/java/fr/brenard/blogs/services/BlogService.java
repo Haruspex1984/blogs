@@ -12,4 +12,8 @@ public interface BlogService {
     BlogDTO getBlogById(Long id);
     void createBlog(BlogForm form);
 
+    void deleteBlogByUserId(Long Userid);
+
+
+
 }

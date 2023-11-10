@@ -55,5 +55,10 @@ public class BlogServiceImpl implements BlogService {
         userRepository.save(user);
     }
 
+    @Override
+    public void deleteBlogByUserId(Long userId) {
+        blogRepository.deleteBlogByUserId(userId);
+    }
+
 
 }

@@ -13,8 +13,7 @@ import java.time.LocalDate;
 public class BlogForm {
 
     @NotBlank
-    @Size(min = 3)
-    @Size(max = 50)
+    @Size(min = 3, max = 50)
     private String title;
     private LocalDate creationDate;
     private Long userId;
