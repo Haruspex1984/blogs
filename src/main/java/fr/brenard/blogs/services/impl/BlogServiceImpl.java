@@ -35,14 +35,19 @@ public class BlogServiceImpl implements BlogService {
 
     @Override
     public BlogDTO getBlogById(Long id) {
-        return blogRepository.findById(id).map(BlogMapper::fromEntity).orElseThrow(EntityNotFoundException::new);
+        try{
+            return blogRepository.findById(id).map(BlogMapper::fromEntity).orElseThrow(EntityNotFoundException::new);
+        }catch (EntityNotFoundException e){
+            throw new EntityNotFoundException("No blog with id "+id);
+        }
+
     }
 
 
     @Override
     public void createBlog(BlogForm form) {
         Blog newBlog = createNewBlog(form);
-        updateUserWithBlog(form.getUserId(), newBlog);
+        updateUserWithNewBlog(form.getUserId(), newBlog);
     }
     private Blog createNewBlog(BlogForm form) {
         Blog newBlog = new Blog();
@@ -50,7 +55,7 @@ public class BlogServiceImpl implements BlogService {
         newBlog.setTitle(form.getTitle());
         return blogRepository.save(newBlog);
     }
-    private void updateUserWithBlog(Long userId, Blog newBlog) {
+    private void updateUserWithNewBlog(Long userId, Blog newBlog) {
         User user = userRepository.findById(userId).orElseThrow();
         user.setBlog(newBlog);
         userRepository.save(user);
@@ -73,5 +78,7 @@ public class BlogServiceImpl implements BlogService {
     public void deleteBlogByUserId(Long userId) {
         blogRepository.deleteBlogByUserId(userId);
     }
+
+
 
 }

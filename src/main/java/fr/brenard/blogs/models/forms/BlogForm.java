@@ -1,11 +1,8 @@
 package fr.brenard.blogs.models.forms;
 
-import jakarta.validation.constraints.Max;
-import jakarta.validation.constraints.Min;
-import jakarta.validation.constraints.NotBlank;
-import jakarta.validation.constraints.Size;
+import jakarta.validation.constraints.*;
 import lombok.Data;
-import org.hibernate.validator.constraints.Length;
+
 
 import java.time.LocalDate;
 
@@ -14,6 +11,7 @@ public class BlogForm {
 
     @NotBlank
     @Size(min = 3, max = 50)
+    @Pattern(regexp = "^[a-zA-Z][a-zA-Z0-9,'-.?!\\s]*$")
     private String title;
     private LocalDate creationDate;
     private Long userId;

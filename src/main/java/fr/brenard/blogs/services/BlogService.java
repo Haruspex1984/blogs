@@ -13,7 +13,6 @@ public interface BlogService {
     BlogDTO getBlogById(Long id);
     void createBlog(BlogForm form);
     void updateBlog(Long userId,BlogUpdateForm form);
-
     void deleteBlogByUserId(Long Userid);
 
 
