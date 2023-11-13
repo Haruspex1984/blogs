@@ -36,9 +36,9 @@ public class BlogController {
     }
 
     @Transactional
-    @DeleteMapping("/{id}/delete")
-    public void deleteBlog(@PathVariable Long id){
-        blogService.deleteBlogByUserId(id);
+    @DeleteMapping("/{userId}/delete")
+    public void deleteBlog(@PathVariable Long userId){
+        blogService.deleteBlogByUserId(userId);
     }
 
 

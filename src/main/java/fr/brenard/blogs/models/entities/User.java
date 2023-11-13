@@ -5,11 +5,15 @@ import jakarta.persistence.*;
 import lombok.Getter;
 import lombok.Setter;
 import org.springframework.security.core.GrantedAuthority;
+import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
 
 import java.time.LocalDate;
 import java.util.Collection;
 import java.util.Date;
+import java.util.LinkedHashSet;
+import java.util.Set;
+import java.util.stream.Collectors;
 
 @Entity
 @Getter
@@ -38,9 +42,14 @@ public class User implements UserDetails {
     @JoinColumn(name = "blog_id")
     private Blog blog;
 
+    @ElementCollection(fetch = FetchType.EAGER)
+    private Set<String> roles = new LinkedHashSet<>();
+
     @Override
     public Collection<? extends GrantedAuthority> getAuthorities() {
-        return null;
+        return roles.stream()
+                .map((role) -> new SimpleGrantedAuthority("ROLE_"+role))
+                .collect(Collectors.toSet());
     }
 
     @Override
