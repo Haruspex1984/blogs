@@ -11,8 +11,8 @@ public interface BlogService {
 
     List<BlogDTO> getAll();
     BlogDTO getBlogById(Long id);
-    void createBlog(BlogForm form);
-    void updateBlog(Long userId,BlogUpdateForm form);
+    void createAndSetupNewBlog(BlogForm form);
+    void updateBlogTitle(Long userId, BlogUpdateForm form);
     void deleteBlogByUserId(Long Userid);
 
 

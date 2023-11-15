@@ -5,7 +5,7 @@ import fr.brenard.blogs.models.entities.Blog;
 import fr.brenard.blogs.models.entities.User;
 import fr.brenard.blogs.models.forms.BlogForm;
 import fr.brenard.blogs.models.forms.BlogUpdateForm;
-import fr.brenard.blogs.models.mappers.BlogMapper;
+import fr.brenard.blogs.tools.mappers.BlogMapper;
 import fr.brenard.blogs.repositories.BlogRepository;
 import fr.brenard.blogs.repositories.UserRepository;
 import fr.brenard.blogs.services.BlogService;
@@ -45,25 +45,27 @@ public class BlogServiceImpl implements BlogService {
 
 
     @Override
-    public void createBlog(BlogForm form) {
-        Blog newBlog = createNewBlog(form);
-        updateUserWithNewBlog(form.getUserId(), newBlog);
-    }
-    private Blog createNewBlog(BlogForm form) {
+    public void createAndSetupNewBlog(BlogForm form) {
         Blog newBlog = new Blog();
+        setUpNewBlog(newBlog,form);
+    }
+
+    private void setUpNewBlog(Blog newBlog, BlogForm form){
         newBlog.setCreationDate(LocalDate.now());
         newBlog.setTitle(form.getTitle());
-        return blogRepository.save(newBlog);
+        updateUserWithNewBlog(form.getUserId(), newBlog);
     }
+
     private void updateUserWithNewBlog(Long userId, Blog newBlog) {
         User user = userRepository.findById(userId).orElseThrow();
         user.setBlog(newBlog);
+        blogRepository.save(newBlog);
         userRepository.save(user);
     }
 
 
     @Override
-    public void updateBlog(Long userId,BlogUpdateForm form) {
+    public void updateBlogTitle(Long userId, BlogUpdateForm form) {
         Blog blog = getBlogByUserId(userId);
         blog.setTitle(form.getTitle());
         blogRepository.save(blog);

@@ -6,6 +6,9 @@ import lombok.Getter;
 import lombok.Setter;
 
 import java.time.LocalDate;
+import java.util.LinkedHashSet;
+import java.util.List;
+import java.util.Set;
 
 @Entity
 @Getter
@@ -25,5 +28,8 @@ public class Blog {
 
     @OneToOne(mappedBy = "blog", orphanRemoval = true)
     private User user;
+
+    @OneToMany(mappedBy = "blog", cascade = CascadeType.ALL, orphanRemoval = true)
+    private Set<Article> articles = new LinkedHashSet<>();
 
 }

@@ -1,4 +1,4 @@
-package fr.brenard.blogs.models.mappers;
+package fr.brenard.blogs.tools.mappers;
 
 import fr.brenard.blogs.models.DTOs.UserDTO;
 import fr.brenard.blogs.models.entities.User;

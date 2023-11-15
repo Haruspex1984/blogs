@@ -3,6 +3,7 @@ package fr.brenard.blogs.controllers;
 
 import fr.brenard.blogs.models.DTOs.BlogDTO;
 import fr.brenard.blogs.models.forms.BlogForm;
+import fr.brenard.blogs.models.forms.BlogUpdateForm;
 import fr.brenard.blogs.services.BlogService;
 import jakarta.transaction.Transactional;
 import jakarta.validation.Valid;
@@ -32,7 +33,12 @@ public class BlogController {
 
     @PostMapping("/create")
     public void createBlog(@RequestBody @Valid BlogForm form){
-        blogService.createBlog(form);
+        blogService.createAndSetupNewBlog(form);
+    }
+
+    @PatchMapping("/{userId}/update")
+    public void updateBlogTitle(@RequestBody @Valid BlogUpdateForm form, @PathVariable Long userId){
+        blogService.updateBlogTitle(userId, form);
     }
 
     @Transactional

@@ -2,7 +2,7 @@ package fr.brenard.blogs.services.impl;
 
 import fr.brenard.blogs.models.DTOs.UserDTO;
 
-import fr.brenard.blogs.models.mappers.UserMapper;
+import fr.brenard.blogs.tools.mappers.UserMapper;
 import fr.brenard.blogs.repositories.UserRepository;
 import fr.brenard.blogs.services.UserService;
 import jakarta.persistence.EntityNotFoundException;
