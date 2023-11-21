@@ -11,6 +11,8 @@ public interface ArticleService {
  List<ArticleDTO> getAll();
  ArticleDTO getArticleById(Long id);
  void createAndSetUpNewArticle(ArticleForm form, Long userId);
+ void updateArticle(ArticleForm form, Long articleId);
+ void deleteArticle(Long articleId);
 
 
 

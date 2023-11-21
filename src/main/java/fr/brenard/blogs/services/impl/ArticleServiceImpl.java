@@ -2,12 +2,15 @@ package fr.brenard.blogs.services.impl;
 
 import fr.brenard.blogs.models.DTOs.ArticleDTO;
 import fr.brenard.blogs.models.entities.Article;
+import fr.brenard.blogs.models.entities.Blog;
+import fr.brenard.blogs.models.entities.User;
 import fr.brenard.blogs.models.forms.ArticleForm;
 import fr.brenard.blogs.repositories.ArticleRepository;
 import fr.brenard.blogs.repositories.BlogRepository;
 import fr.brenard.blogs.repositories.UserRepository;
 import fr.brenard.blogs.services.ArticleService;
 import fr.brenard.blogs.tools.mappers.ArticleMapper;
+import jakarta.persistence.EntityNotFoundException;
 import org.springframework.stereotype.Service;
 
 import java.time.LocalDateTime;
@@ -38,14 +41,43 @@ public class ArticleServiceImpl implements ArticleService {
 
     @Override
     public void createAndSetUpNewArticle(ArticleForm form, Long userId) {
+        User user = userRepository.findById(userId).orElseThrow(EntityNotFoundException::new);
+        Blog blog = user.getBlog();
+
         Article article = new Article();
+
         article.setTitle(form.getTitle());
         article.setContent(form.getContent());
         article.setVisible(form.isVisible());
         article.setCreationDate(LocalDateTime.now());
-        article.setUser(userRepository.findById(userId).orElseThrow());
-        article.setBlog(article.getUser().getBlog());
-        blogRepository.save(article.getBlog());
+        article.setUser(user);
+        article.setBlog(blog);
+
+        saveNewArticle(blog, article);
+    }
+    private void saveNewArticle(Blog blog, Article article) {
+        blogRepository.save(blog);
         articleRepository.save(article);
     }
+
+
+    @Override
+    public void updateArticle(ArticleForm form, Long articleId) {
+
+        Article article = articleRepository.findById(articleId).orElseThrow(EntityNotFoundException::new);
+
+        article.setTitle(form.getTitle());
+        article.setContent(form.getContent());
+        article.setLastUpdateDate(LocalDateTime.now());
+
+        articleRepository.save(article);
+
+    }
+
+    @Override
+    public void deleteArticle(Long articleId) {
+        articleRepository.deleteById(articleId);
+    }
+
+
 }

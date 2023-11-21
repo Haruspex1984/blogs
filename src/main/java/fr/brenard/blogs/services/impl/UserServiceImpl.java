@@ -2,6 +2,7 @@ package fr.brenard.blogs.services.impl;
 
 import fr.brenard.blogs.models.DTOs.UserDTO;
 
+import fr.brenard.blogs.models.entities.User;
 import fr.brenard.blogs.tools.mappers.UserMapper;
 import fr.brenard.blogs.repositories.UserRepository;
 import fr.brenard.blogs.services.UserService;
@@ -26,7 +27,9 @@ public class UserServiceImpl implements UserService {
     }
 
     @Override
-    public UserDTO getUserById(Long id) {
+    public UserDTO getUserDTOByUserId(Long id) {
         return userRepository.findById(id).map(UserMapper::fromEntity).orElseThrow(EntityNotFoundException::new);
     }
+
+
 }
