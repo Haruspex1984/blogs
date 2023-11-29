@@ -59,16 +59,19 @@ public class BlogServiceImpl implements BlogService {
     private void updateUserWithNewBlog(Long userId, Blog newBlog) {
         User user = userRepository.findById(userId).orElseThrow();
         user.setBlog(newBlog);
+
         blogRepository.save(newBlog);
         userRepository.save(user);
     }
 
 
     @Override
-    public void updateBlogTitle(Long userId, BlogUpdateForm form) {
-        Blog blog = getBlogByUserId(userId);
+    public void updateBlogTitle(BlogUpdateForm form) {
+        Blog blog = getBlogByUserId(form.getUserId());
         blog.setTitle(form.getTitle());
+        System.out.println(blog);
         blogRepository.save(blog);
+
     }
     private Blog getBlogByUserId(Long userId){
         User user = userRepository.findById(userId).orElseThrow();

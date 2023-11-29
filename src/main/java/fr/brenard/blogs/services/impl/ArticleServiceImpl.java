@@ -54,7 +54,9 @@ public class ArticleServiceImpl implements ArticleService {
         article.setBlog(blog);
 
         saveNewArticle(blog, article);
+
     }
+
     private void saveNewArticle(Blog blog, Article article) {
         blogRepository.save(blog);
         articleRepository.save(article);
