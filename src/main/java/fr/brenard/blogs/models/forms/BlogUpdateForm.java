@@ -9,7 +9,6 @@ public class BlogUpdateForm {
 
     @NotBlank
     @Size(min = 3, max = 50)
-    @Pattern(regexp = Constants.BLOG_TITLE_REGEX)
     private String title;
     private Long userId;
 

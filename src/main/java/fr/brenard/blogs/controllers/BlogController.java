@@ -10,6 +10,7 @@ import jakarta.transaction.Transactional;
 import jakarta.validation.Valid;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.util.Assert;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
@@ -24,12 +25,12 @@ public class BlogController {
         this.blogService = blogService;
     }
 
-    @RequestMapping("/all")
+    @GetMapping("/all")
     public List<BlogDTO> getAll(){
         return blogService.getAll();
     }
 
-    @RequestMapping("/{id}")
+    @GetMapping("/{id}")
     public BlogDTO getBlogById(@PathVariable Long id){
         return blogService.getBlogById(id);
     }

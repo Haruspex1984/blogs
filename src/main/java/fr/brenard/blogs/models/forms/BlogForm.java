@@ -14,7 +14,6 @@ public class BlogForm {
 
     @NotBlank
     @Size(min = 3, max = 50)
-    @Pattern(regexp = Constants.BLOG_TITLE_REGEX)
     private String title;
     private LocalDate creationDate;
     private Long userId;

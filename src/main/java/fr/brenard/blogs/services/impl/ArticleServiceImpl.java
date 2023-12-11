@@ -41,6 +41,7 @@ public class ArticleServiceImpl implements ArticleService {
 
     @Override
     public void createAndSetUpNewArticle(ArticleForm form, Long userId) {
+
         User user = userRepository.findById(userId).orElseThrow(EntityNotFoundException::new);
         Blog blog = user.getBlog();
 
@@ -53,33 +54,45 @@ public class ArticleServiceImpl implements ArticleService {
         article.setUser(user);
         article.setBlog(blog);
 
-        saveNewArticle(blog, article);
+        blog.setNumberOfArticles(blog.getNumberOfArticles()+1);
 
+        saveBlog(blog);
+        saveArticle(article);
     }
 
-    private void saveNewArticle(Blog blog, Article article) {
-        blogRepository.save(blog);
+    private void saveArticle(Article article) {
         articleRepository.save(article);
+    }
+
+
+    private void saveBlog(Blog blog){
+        blogRepository.save(blog);
     }
 
 
     @Override
     public void updateArticle(ArticleForm form, Long articleId) {
 
-        Article article = articleRepository.findById(articleId).orElseThrow(EntityNotFoundException::new);
+        Article article = getArticle(articleId);
 
         article.setTitle(form.getTitle());
         article.setContent(form.getContent());
         article.setLastUpdateDate(LocalDateTime.now());
 
-        articleRepository.save(article);
+        saveArticle(article);
 
+    }
+
+    private Article getArticle(Long articleId) {
+        return articleRepository.findById(articleId).orElseThrow(EntityNotFoundException::new);
     }
 
     @Override
     public void deleteArticle(Long articleId) {
+        Article article = getArticle(articleId);
+        Blog blog = article.getBlog();
+        blog.setNumberOfArticles(blog.getNumberOfArticles()-1);
+        saveBlog(blog);
         articleRepository.deleteById(articleId);
     }
-
-
 }

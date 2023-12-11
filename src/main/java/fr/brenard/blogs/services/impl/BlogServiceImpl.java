@@ -53,6 +53,7 @@ public class BlogServiceImpl implements BlogService {
     private void setUpNewBlog(Blog newBlog, BlogForm form){
         newBlog.setCreationDate(LocalDate.now());
         newBlog.setTitle(form.getTitle());
+        newBlog.setNumberOfArticles(0);
         updateUserWithNewBlog(form.getUserId(), newBlog);
     }
 

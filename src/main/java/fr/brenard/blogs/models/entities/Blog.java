@@ -23,6 +23,9 @@ public class Blog {
     @Column(nullable = false, unique = true)
     private String title;
 
+    @Column(name = "number_of_articles")
+    private int numberOfArticles;
+
     @Column(name = "creation_date", nullable = false)
     private LocalDate creationDate;
 

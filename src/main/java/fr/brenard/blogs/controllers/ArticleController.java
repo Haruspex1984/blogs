@@ -29,6 +29,11 @@ public class ArticleController {
         return articleService.getAll();
     }
 
+    @GetMapping("/{articleId}")
+    public ArticleDTO getArticleById(@PathVariable Long articleId){
+        return articleService.getArticleById(articleId);
+    }
+
 
     @PostMapping("/{userId}/newArticle")
     @ResponseStatus(HttpStatus.CREATED)
