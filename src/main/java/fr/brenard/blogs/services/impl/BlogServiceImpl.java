@@ -12,6 +12,7 @@ import fr.brenard.blogs.repositories.BlogRepository;
 import fr.brenard.blogs.repositories.UserRepository;
 import fr.brenard.blogs.services.BlogService;
 import jakarta.persistence.EntityNotFoundException;
+import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 
 import java.time.LocalDate;
@@ -49,12 +50,14 @@ public class BlogServiceImpl implements BlogService {
 
 
     @Override
-    public void createAndSetupNewBlog(BlogForm form) {
-        Blog newBlog = new Blog();
+    public ResponseEntity<String> createAndSetupNewBlog(BlogForm form) {
         try{
+            Blog newBlog = new Blog();
             setUpNewBlog(newBlog, form);
+            return ResponseEntity.ok("Blog créé avec succès");
         }catch (ForbiddenWordsException exception){
             System.out.println(exception.getMessage());
+            return ResponseEntity.badRequest().body("Le titre du blog contient un mot non autorisé");
         }
 
     }

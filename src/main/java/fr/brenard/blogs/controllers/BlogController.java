@@ -1,6 +1,7 @@
 package fr.brenard.blogs.controllers;
 
 
+import fr.brenard.blogs.configuration.exceptions.ForbiddenWordsException;
 import fr.brenard.blogs.models.DTOs.BlogDTO;
 import fr.brenard.blogs.models.entities.Blog;
 import fr.brenard.blogs.models.forms.BlogForm;
@@ -26,35 +27,32 @@ public class BlogController {
     }
 
     @GetMapping("/all")
-    public List<BlogDTO> getAll(){
+    public List<BlogDTO> getAll() {
         return blogService.getAll();
     }
 
     @GetMapping("/{id}")
-    public BlogDTO getBlogById(@PathVariable Long id){
+    public BlogDTO getBlogById(@PathVariable Long id) {
         return blogService.getBlogById(id);
     }
 
     @PostMapping("/create")
-    @ResponseStatus(HttpStatus.CREATED)
-    public void createBlog(@RequestBody @Valid BlogForm form){
-        blogService.createAndSetupNewBlog(form);
+    public ResponseEntity<String> createBlog(@RequestBody @Valid BlogForm form) {
+        return blogService.createAndSetupNewBlog(form);
     }
 
     @PatchMapping("/{userId}/update")
     @ResponseStatus(HttpStatus.ACCEPTED)
-    public void updateBlogTitle(@RequestBody @Valid BlogUpdateForm form){
+    public void updateBlogTitle(@RequestBody @Valid BlogUpdateForm form) {
         blogService.updateBlogTitle(form);
-
     }
 
     @Transactional
     @DeleteMapping("/{userId}/delete")
     @ResponseStatus(HttpStatus.NO_CONTENT)
-    public void deleteBlog(@PathVariable Long userId){
+    public void deleteBlog(@PathVariable Long userId) {
         blogService.deleteBlogByUserId(userId);
     }
-
 
 
 }
