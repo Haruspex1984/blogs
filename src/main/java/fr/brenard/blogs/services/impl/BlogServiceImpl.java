@@ -1,10 +1,12 @@
 package fr.brenard.blogs.services.impl;
 
+import fr.brenard.blogs.configuration.exceptions.ForbiddenWordsException;
 import fr.brenard.blogs.models.DTOs.BlogDTO;
 import fr.brenard.blogs.models.entities.Blog;
 import fr.brenard.blogs.models.entities.User;
 import fr.brenard.blogs.models.forms.BlogForm;
 import fr.brenard.blogs.models.forms.BlogUpdateForm;
+import fr.brenard.blogs.tools.ForbiddenWordsVerifier;
 import fr.brenard.blogs.tools.mappers.BlogMapper;
 import fr.brenard.blogs.repositories.BlogRepository;
 import fr.brenard.blogs.repositories.UserRepository;
@@ -20,11 +22,13 @@ public class BlogServiceImpl implements BlogService {
 
     private final BlogRepository blogRepository;
     private final UserRepository userRepository;
-    public BlogServiceImpl(BlogRepository blogRepository, UserRepository userRepository) {
+    private final ForbiddenWordsVerifier forbiddenWordsVerifier;
+
+    public BlogServiceImpl(BlogRepository blogRepository, UserRepository userRepository, ForbiddenWordsVerifier forbiddenWordsVerifier) {
         this.blogRepository = blogRepository;
         this.userRepository = userRepository;
+        this.forbiddenWordsVerifier = forbiddenWordsVerifier;
     }
-
 
 
     @Override
@@ -35,10 +39,10 @@ public class BlogServiceImpl implements BlogService {
 
     @Override
     public BlogDTO getBlogById(Long id) {
-        try{
+        try {
             return blogRepository.findById(id).map(BlogMapper::fromEntity).orElseThrow(EntityNotFoundException::new);
-        }catch (EntityNotFoundException e){
-            throw new EntityNotFoundException("No blog with id "+id);
+        } catch (EntityNotFoundException e) {
+            throw new EntityNotFoundException("No blog with id " + id);
         }
 
     }
@@ -47,15 +51,29 @@ public class BlogServiceImpl implements BlogService {
     @Override
     public void createAndSetupNewBlog(BlogForm form) {
         Blog newBlog = new Blog();
-        setUpNewBlog(newBlog,form);
+        try{
+            setUpNewBlog(newBlog, form);
+        }catch (ForbiddenWordsException exception){
+            System.out.println(exception.getMessage());
+        }
+
     }
 
-    private void setUpNewBlog(Blog newBlog, BlogForm form){
+    private void setUpNewBlog(Blog newBlog, BlogForm form) throws ForbiddenWordsException {
+
+        String title = form.getTitle();
+
+        if(forbiddenWordsVerifier.titleIsForbidden(title)){
+            throw new ForbiddenWordsException("Ce titre n'est pas autorisé");
+        }
+
         newBlog.setCreationDate(LocalDate.now());
-        newBlog.setTitle(form.getTitle());
+        newBlog.setTitle(title);
         newBlog.setNumberOfArticles(0);
         updateUserWithNewBlog(form.getUserId(), newBlog);
+
     }
+
 
     private void updateUserWithNewBlog(Long userId, Blog newBlog) {
         User user = userRepository.findById(userId).orElseThrow();
@@ -74,7 +92,8 @@ public class BlogServiceImpl implements BlogService {
         blogRepository.save(blog);
 
     }
-    private Blog getBlogByUserId(Long userId){
+
+    private Blog getBlogByUserId(Long userId) {
         User user = userRepository.findById(userId).orElseThrow();
         return user.getBlog();
     }
@@ -84,7 +103,6 @@ public class BlogServiceImpl implements BlogService {
     public void deleteBlogByUserId(Long userId) {
         blogRepository.deleteBlogByUserId(userId);
     }
-
 
 
 }
