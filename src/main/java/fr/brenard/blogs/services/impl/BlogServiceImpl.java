@@ -68,9 +68,7 @@ public class BlogServiceImpl implements BlogService {
     }
 
     private void verifyAndSetBlogTitle(Blog blog, BlogForm form) throws ForbiddenWordsException {
-
         String title = form.getTitle();
-
         if (ForbiddenWordsVerifier.containsForbiddenWords(title)) {
             throw new ForbiddenWordsException("Ce titre contient un mot non autorisé");
         }
