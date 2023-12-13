@@ -1,9 +1,7 @@
 package fr.brenard.blogs.controllers;
 
 
-import fr.brenard.blogs.configuration.exceptions.ForbiddenWordsException;
 import fr.brenard.blogs.models.DTOs.BlogDTO;
-import fr.brenard.blogs.models.entities.Blog;
 import fr.brenard.blogs.models.forms.BlogForm;
 import fr.brenard.blogs.models.forms.BlogUpdateForm;
 import fr.brenard.blogs.services.BlogService;
@@ -11,7 +9,6 @@ import jakarta.transaction.Transactional;
 import jakarta.validation.Valid;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import org.springframework.util.Assert;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;

@@ -1,4 +1,4 @@
-package fr.brenard.blogs.configuration.exceptions;
+package fr.brenard.blogs.exceptions;
 
 public class ForbiddenWordsException extends Exception{
 

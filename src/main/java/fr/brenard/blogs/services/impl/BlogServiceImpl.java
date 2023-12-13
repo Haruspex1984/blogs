@@ -1,6 +1,6 @@
 package fr.brenard.blogs.services.impl;
 
-import fr.brenard.blogs.configuration.exceptions.ForbiddenWordsException;
+import fr.brenard.blogs.exceptions.ForbiddenWordsException;
 import fr.brenard.blogs.models.DTOs.BlogDTO;
 import fr.brenard.blogs.models.entities.Blog;
 import fr.brenard.blogs.models.entities.User;
@@ -23,12 +23,12 @@ public class BlogServiceImpl implements BlogService {
 
     private final BlogRepository blogRepository;
     private final UserRepository userRepository;
-    private final ForbiddenWordsVerifier forbiddenWordsVerifier;
 
-    public BlogServiceImpl(BlogRepository blogRepository, UserRepository userRepository, ForbiddenWordsVerifier forbiddenWordsVerifier) {
+
+    public BlogServiceImpl(BlogRepository blogRepository, UserRepository userRepository) {
         this.blogRepository = blogRepository;
         this.userRepository = userRepository;
-        this.forbiddenWordsVerifier = forbiddenWordsVerifier;
+
     }
 
 
@@ -66,8 +66,8 @@ public class BlogServiceImpl implements BlogService {
 
         String title = form.getTitle();
 
-        if(forbiddenWordsVerifier.titleIsForbidden(title)){
-            throw new ForbiddenWordsException("Ce titre n'est pas autorisé");
+        if(ForbiddenWordsVerifier.containsForbiddenWords(title)){
+            throw new ForbiddenWordsException("Ce titre contient un mot non autorisé");
         }
 
         newBlog.setCreationDate(LocalDate.now());
@@ -91,7 +91,6 @@ public class BlogServiceImpl implements BlogService {
     public void updateBlogTitle(BlogUpdateForm form) {
         Blog blog = getBlogByUserId(form.getUserId());
         blog.setTitle(form.getTitle());
-        System.out.println(blog);
         blogRepository.save(blog);
 
     }

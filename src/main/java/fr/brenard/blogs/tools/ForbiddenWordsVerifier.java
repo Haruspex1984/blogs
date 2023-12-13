@@ -11,24 +11,27 @@ import java.util.Scanner;
 @Component
 public class ForbiddenWordsVerifier {
 
-    List<String> forbiddenWordsAsList = new ArrayList<>();
+    private static final List<String> forbiddenWordsList = new ArrayList<>();
+
+    static {
+        initializeForbiddenWordsList();
+    }
 
 
-    public boolean titleIsForbidden(String content) {
-        addForbiddenWordsToList();
-        String[] words = content.split("\\s+");
-        for (String word : words) {
-            if (forbiddenWordsAsList.contains(word.toLowerCase()))
+    public static boolean containsForbiddenWords(String content) {
+        String[] forbiddenWords = content.split("\\s+");
+        for (String word : forbiddenWords) {
+            if (forbiddenWordsList.contains(word.toLowerCase()))
                 return true;
         }
         return false;
     }
 
-    private void addForbiddenWordsToList() {
-        File forbiddenWordsAsTxtFile = new File("src/main/java/fr/brenard/blogs/configuration/ForbiddenWords.txt");
-        try (Scanner scan = new Scanner(forbiddenWordsAsTxtFile)) {
+    private static void initializeForbiddenWordsList() {
+        File forbiddenWordsFile = new File(Constants.FORBIDDEN_WORDS_FILE_PATH);
+        try (Scanner scan = new Scanner(forbiddenWordsFile)) {
             while (scan.hasNextLine()) {
-                forbiddenWordsAsList.add(scan.nextLine());
+                forbiddenWordsList.add(scan.nextLine());
             }
         } catch (FileNotFoundException exception) {
             System.out.println(exception.getMessage());
