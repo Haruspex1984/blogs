@@ -1,11 +1,13 @@
-package fr.brenard.blogs.models.forms;
+package fr.brenard.blogs.models.forms.blogs;
 
 import fr.brenard.blogs.tools.Constants;
 import jakarta.validation.constraints.*;
 import lombok.Data;
+import lombok.EqualsAndHashCode;
 
+@EqualsAndHashCode(callSuper = true)
 @Data
-public class BlogUpdateForm {
+public class BlogUpdateForm extends BlogForm{
 
     @NotBlank
     @Size(min = 3, max = 50)

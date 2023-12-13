@@ -1,14 +1,15 @@
-package fr.brenard.blogs.models.forms;
+package fr.brenard.blogs.models.forms.blogs;
 
-import fr.brenard.blogs.tools.Constants;
 import jakarta.validation.constraints.*;
 import lombok.Data;
+import lombok.EqualsAndHashCode;
 
 
 import java.time.LocalDate;
 
+@EqualsAndHashCode(callSuper = true)
 @Data
-public class BlogForm {
+public class BlogCreationForm extends BlogForm {
 
 
 

@@ -2,8 +2,8 @@ package fr.brenard.blogs.controllers;
 
 
 import fr.brenard.blogs.models.DTOs.BlogDTO;
-import fr.brenard.blogs.models.forms.BlogForm;
-import fr.brenard.blogs.models.forms.BlogUpdateForm;
+import fr.brenard.blogs.models.forms.blogs.BlogCreationForm;
+import fr.brenard.blogs.models.forms.blogs.BlogUpdateForm;
 import fr.brenard.blogs.services.BlogService;
 import jakarta.transaction.Transactional;
 import jakarta.validation.Valid;
@@ -34,14 +34,14 @@ public class BlogController {
     }
 
     @PostMapping("/create")
-    public ResponseEntity<String> createBlog(@RequestBody @Valid BlogForm form) {
+    public ResponseEntity<String> createBlog(@RequestBody @Valid BlogCreationForm form) {
         return blogService.createAndSetupNewBlog(form);
     }
 
     @PatchMapping("/{userId}/update")
     @ResponseStatus(HttpStatus.ACCEPTED)
-    public void updateBlogTitle(@RequestBody @Valid BlogUpdateForm form) {
-        blogService.updateBlogTitle(form);
+    public ResponseEntity<String> updateBlogTitle(@RequestBody @Valid BlogUpdateForm form) {
+       return blogService.updateBlogTitle(form);
     }
 
     @Transactional
