@@ -5,7 +5,9 @@ import fr.brenard.blogs.models.entities.Blog;
 import fr.brenard.blogs.models.forms.blogs.BlogForm;
 import fr.brenard.blogs.services.BlogValidationService;
 import fr.brenard.blogs.tools.ForbiddenWordsVerifier;
+import org.springframework.stereotype.Service;
 
+@Service
 public class BlogValidationServiceImpl implements BlogValidationService {
     @Override
     public void verifyTitle(String title) throws ForbiddenWordsException {
