@@ -5,13 +5,12 @@ import fr.brenard.blogs.models.DTOs.BlogDTO;
 import fr.brenard.blogs.models.entities.Blog;
 import fr.brenard.blogs.models.entities.User;
 import fr.brenard.blogs.models.forms.blogs.BlogCreationForm;
-import fr.brenard.blogs.models.forms.blogs.BlogForm;
 import fr.brenard.blogs.models.forms.blogs.BlogUpdateForm;
-import fr.brenard.blogs.tools.ForbiddenWordsVerifier;
+import fr.brenard.blogs.services.BlogValidationService;
 import fr.brenard.blogs.tools.mappers.BlogMapper;
 import fr.brenard.blogs.repositories.BlogRepository;
 import fr.brenard.blogs.repositories.UserRepository;
-import fr.brenard.blogs.services.BlogService;
+import fr.brenard.blogs.services.BlogCRUDService;
 import jakarta.persistence.EntityNotFoundException;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
@@ -20,14 +19,16 @@ import java.time.LocalDate;
 import java.util.List;
 
 @Service
-public class BlogServiceImpl implements BlogService {
+public class BlogCRUDServiceImpl implements BlogCRUDService {
 
     private final BlogRepository blogRepository;
     private final UserRepository userRepository;
+    private final BlogValidationService validationService;
 
-    public BlogServiceImpl(BlogRepository blogRepository, UserRepository userRepository) {
+    public BlogCRUDServiceImpl(BlogRepository blogRepository, UserRepository userRepository, BlogValidationService validationService) {
         this.blogRepository = blogRepository;
         this.userRepository = userRepository;
+        this.validationService = validationService;
     }
 
 
@@ -49,8 +50,8 @@ public class BlogServiceImpl implements BlogService {
     @Override
     public ResponseEntity<String> createAndSetupNewBlog(BlogCreationForm form) {
         try {
-            Blog newBlog = new Blog();
-            setUpNewBlog(newBlog, form);
+            Blog blog = new Blog();
+            setUpNewBlog(blog, form);
             return ResponseEntity.ok("Blog créé avec succès");
         } catch (ForbiddenWordsException exception) {
             System.out.println(exception.getMessage());
@@ -58,22 +59,17 @@ public class BlogServiceImpl implements BlogService {
         }
     }
 
-    private void setUpNewBlog(Blog newBlog, BlogCreationForm form) throws ForbiddenWordsException {
+    private void setUpNewBlog(Blog blog, BlogCreationForm form) throws ForbiddenWordsException {
 
-        verifyAndSetBlogTitle(newBlog, form);
-        newBlog.setCreationDate(LocalDate.now());
-        newBlog.setNumberOfArticles(0);
-        updateUserWithNewBlog(form.getUserId(), newBlog);
+        validationService.verifyTitle(form.getTitle());
+
+        blog.setTitle(form.getTitle());
+        blog.setCreationDate(LocalDate.now());
+        blog.setNumberOfArticles(0);
+        updateUserWithNewBlog(form.getUserId(), blog);
 
     }
 
-    private void verifyAndSetBlogTitle(Blog blog, BlogForm form) throws ForbiddenWordsException {
-        String title = form.getTitle();
-        if (ForbiddenWordsVerifier.containsForbiddenWords(title)) {
-            throw new ForbiddenWordsException("Ce titre contient un mot non autorisé");
-        }
-        blog.setTitle(title);
-    }
 
     private void updateUserWithNewBlog(Long userId, Blog newBlog) {
         User user = userRepository.findById(userId).orElseThrow();
@@ -88,7 +84,8 @@ public class BlogServiceImpl implements BlogService {
         Blog blog = getBlogByUserId(form.getUserId());
 
         try {
-            verifyAndSetBlogTitle(blog, form);
+            validationService.verifyTitle(form.getTitle());
+            blog.setTitle(form.getTitle());
             blogRepository.save(blog);
             return ResponseEntity.ok("Succès");
         } catch (ForbiddenWordsException exception) {

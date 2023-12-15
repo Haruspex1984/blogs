@@ -4,7 +4,7 @@ package fr.brenard.blogs.controllers;
 import fr.brenard.blogs.models.DTOs.BlogDTO;
 import fr.brenard.blogs.models.forms.blogs.BlogCreationForm;
 import fr.brenard.blogs.models.forms.blogs.BlogUpdateForm;
-import fr.brenard.blogs.services.BlogService;
+import fr.brenard.blogs.services.BlogCRUDService;
 import jakarta.transaction.Transactional;
 import jakarta.validation.Valid;
 import org.springframework.http.HttpStatus;
@@ -17,38 +17,38 @@ import java.util.List;
 @RequestMapping("/blogs")
 public class BlogController {
 
-    private final BlogService blogService;
+    private final BlogCRUDService blogCRUDService;
 
-    public BlogController(BlogService blogService) {
-        this.blogService = blogService;
+    public BlogController(BlogCRUDService blogCRUDService) {
+        this.blogCRUDService = blogCRUDService;
     }
 
     @GetMapping("/all")
     public List<BlogDTO> getAll() {
-        return blogService.getAll();
+        return blogCRUDService.getAll();
     }
 
     @GetMapping("/{id}")
     public BlogDTO getBlogById(@PathVariable Long id) {
-        return blogService.getBlogById(id);
+        return blogCRUDService.getBlogById(id);
     }
 
     @PostMapping("/create")
     public ResponseEntity<String> createBlog(@RequestBody @Valid BlogCreationForm form) {
-        return blogService.createAndSetupNewBlog(form);
+        return blogCRUDService.createAndSetupNewBlog(form);
     }
 
     @PatchMapping("/{userId}/update")
     @ResponseStatus(HttpStatus.ACCEPTED)
     public ResponseEntity<String> updateBlogTitle(@RequestBody @Valid BlogUpdateForm form) {
-       return blogService.updateBlogTitle(form);
+       return blogCRUDService.updateBlogTitle(form);
     }
 
     @Transactional
     @DeleteMapping("/{userId}/delete")
     @ResponseStatus(HttpStatus.NO_CONTENT)
     public void deleteBlog(@PathVariable Long userId) {
-        blogService.deleteBlogByUserId(userId);
+        blogCRUDService.deleteBlogByUserId(userId);
     }
 
 
