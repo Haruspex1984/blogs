@@ -51,51 +51,57 @@ public class BlogCRUDServiceImpl implements BlogCRUDService {
     public ResponseEntity<String> createAndSetupNewBlog(BlogCreationForm form) {
         try {
             Blog blog = new Blog();
-            setUpNewBlog(blog, form);
-            return ResponseEntity.ok("Blog créé avec succès");
+            User user = findUserById(form.getUserId());
+
+            user.setBlog(blog);
+
+            validationService.verifyTitle(form.getTitle());
+
+            setUpNewBlogFromForm(blog,form);
+
+            blogRepository.save(blog);
+            userRepository.save(user);
+
+            return ResponseEntity.ok("Blog has been created");
         } catch (ForbiddenWordsException exception) {
             System.out.println(exception.getMessage());
-            return ResponseEntity.badRequest().body("Le titre du blog contient un mot non autorisé");
+            return ResponseEntity.badRequest().body("Forbidden word in blog title");
+        }catch (EntityNotFoundException exception){
+            System.out.println(exception.getMessage());
+            return ResponseEntity.badRequest().body("User not found");
         }
     }
 
-    private void setUpNewBlog(Blog blog, BlogCreationForm form) throws ForbiddenWordsException {
-
-        validationService.verifyTitle(form.getTitle());
-
+    private void setUpNewBlogFromForm(Blog blog,BlogCreationForm form){
         blog.setTitle(form.getTitle());
+        blog.setDescription(form.getDescription());
         blog.setCreationDate(LocalDate.now());
         blog.setNumberOfArticles(0);
-        updateUserWithNewBlog(form.getUserId(), blog);
-
     }
 
-
-    private void updateUserWithNewBlog(Long userId, Blog newBlog) {
-        User user = userRepository.findById(userId).orElseThrow();
-        user.setBlog(newBlog);
-        blogRepository.save(newBlog);
-        userRepository.save(user);
-    }
 
     @Override
-    public ResponseEntity<String> updateBlogTitle(BlogUpdateForm form) {
-
+    public ResponseEntity<String> updateBlogInfo(BlogUpdateForm form) {
         Blog blog = getBlogByUserId(form.getUserId());
-
         try {
             validationService.verifyTitle(form.getTitle());
             blog.setTitle(form.getTitle());
+            blog.setDescription(form.getDescription());
             blogRepository.save(blog);
-            return ResponseEntity.ok("Succès");
+            return ResponseEntity.ok("Blog updated!");
         } catch (ForbiddenWordsException exception) {
             return ResponseEntity.badRequest().body(exception.getMessage());
         }
     }
 
     private Blog getBlogByUserId(Long userId) {
-        User user = userRepository.findById(userId).orElseThrow();
+        User user = userRepository.findById(userId).orElseThrow(EntityNotFoundException::new);
         return user.getBlog();
+    }
+
+    private User findUserById(Long userId) {
+        return userRepository.findById(userId)
+                .orElseThrow(EntityNotFoundException::new);
     }
 
     @Override

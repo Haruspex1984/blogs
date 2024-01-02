@@ -41,7 +41,7 @@ public class BlogController {
     @PatchMapping("/{userId}/update")
     @ResponseStatus(HttpStatus.ACCEPTED)
     public ResponseEntity<String> updateBlogTitle(@RequestBody @Valid BlogUpdateForm form) {
-       return blogCRUDService.updateBlogTitle(form);
+       return blogCRUDService.updateBlogInfo(form);
     }
 
     @Transactional

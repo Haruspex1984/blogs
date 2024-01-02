@@ -16,7 +16,7 @@ public class BlogCreationForm extends BlogForm {
     @NotBlank
     @Size(min = 3, max = 50)
     private String title;
-    private LocalDate creationDate;
+    private String description;
     private Long userId;
 
 }

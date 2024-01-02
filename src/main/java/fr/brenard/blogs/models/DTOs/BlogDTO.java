@@ -11,6 +11,7 @@ public class BlogDTO {
 
     private Long id;
     private String title;
+    private String description;
     private LocalDate creationDate;
     private Long userId;
     private int numberOfArticles;

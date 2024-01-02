@@ -23,6 +23,9 @@ public class Blog {
     @Column(nullable = false, unique = true)
     private String title;
 
+    @Column(nullable = false,columnDefinition = "TEXT")
+    private String description;
+
     @Column(name = "number_of_articles")
     private int numberOfArticles;
 

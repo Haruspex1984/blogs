@@ -10,6 +10,7 @@ public class BlogMapper {
         return BlogDTO.builder()
                 .id(entity.getId())
                 .title(entity.getTitle())
+                .description(entity.getDescription())
                 .creationDate(entity.getCreationDate())
                 .userId(entity.getUser().getId())
                 .numberOfArticles(entity.getNumberOfArticles())

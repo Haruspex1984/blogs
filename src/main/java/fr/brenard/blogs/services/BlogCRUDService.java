@@ -13,7 +13,7 @@ public interface BlogCRUDService {
     List<BlogDTO> getAll();
     BlogDTO getBlogById(Long id);
     ResponseEntity<String> createAndSetupNewBlog(BlogCreationForm form);
-    ResponseEntity<String> updateBlogTitle(BlogUpdateForm form);
+    ResponseEntity<String> updateBlogInfo(BlogUpdateForm form);
     void deleteBlogByUserId(Long Userid);
 
 

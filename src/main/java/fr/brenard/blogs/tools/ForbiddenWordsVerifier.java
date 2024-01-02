@@ -18,6 +18,7 @@ public class ForbiddenWordsVerifier {
     }
 
 
+
     public static boolean containsForbiddenWords(String content) {
         String[] forbiddenWords = content.split("\\s+");
         for (String word : forbiddenWords) {

@@ -12,6 +12,7 @@ public class BlogUpdateForm extends BlogForm{
     @NotBlank
     @Size(min = 3, max = 50)
     private String title;
+    private String description;
     private Long userId;
 
 

@@ -1,8 +1,6 @@
 package fr.brenard.blogs.services.impl;
 
 import fr.brenard.blogs.exceptions.ForbiddenWordsException;
-import fr.brenard.blogs.models.entities.Blog;
-import fr.brenard.blogs.models.forms.blogs.BlogForm;
 import fr.brenard.blogs.services.BlogValidationService;
 import fr.brenard.blogs.tools.ForbiddenWordsVerifier;
 import org.springframework.stereotype.Service;
@@ -16,4 +14,11 @@ public class BlogValidationServiceImpl implements BlogValidationService {
         }
 
     }
+
+
+
+
+
+
+
 }
