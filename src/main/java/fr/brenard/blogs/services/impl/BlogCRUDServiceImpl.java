@@ -17,6 +17,7 @@ import org.springframework.stereotype.Service;
 
 import java.time.LocalDate;
 import java.util.List;
+import java.util.Optional;
 
 @Service
 public class BlogCRUDServiceImpl implements BlogCRUDService {
@@ -49,30 +50,40 @@ public class BlogCRUDServiceImpl implements BlogCRUDService {
 
     @Override
     public ResponseEntity<String> createAndSetupNewBlog(BlogCreationForm form) {
+
         try {
-            Blog blog = new Blog();
-            User user = findUserById(form.getUserId());
+            Optional<User> user = findUserById(form.getUserId());
 
-            user.setBlog(blog);
+            if (user.isPresent()) {
+                Blog blog = new Blog();
+                user.get().setBlog(blog);
 
-            validationService.verifyTitle(form.getTitle());
+                verifyTitle(form.getTitle());
 
-            setUpNewBlogFromForm(blog,form);
+                setUpNewBlogFromForm(blog, form);
 
-            blogRepository.save(blog);
-            userRepository.save(user);
+                blogRepository.save(blog);
+                userRepository.save(user.get());
 
-            return ResponseEntity.ok("Blog has been created");
-        } catch (ForbiddenWordsException exception) {
-            System.out.println(exception.getMessage());
-            return ResponseEntity.badRequest().body("Forbidden word in blog title");
-        }catch (EntityNotFoundException exception){
-            System.out.println(exception.getMessage());
-            return ResponseEntity.badRequest().body("User not found");
+                return ResponseEntity.ok("Blog has been created");
+            } else {
+                return ResponseEntity.badRequest().body("User not found");
+            }
+        }catch (ForbiddenWordsException e){
+            return ResponseEntity.badRequest().body("Title contains forbidden words");
         }
+
     }
 
-    private void setUpNewBlogFromForm(Blog blog,BlogCreationForm form){
+    private void verifyTitle(String title) throws ForbiddenWordsException {
+        validationService.verifyTitle(title);
+    }
+
+    private Optional<User> findUserById(Long userId) {
+        return userRepository.findById(userId);
+    }
+
+    private void setUpNewBlogFromForm(Blog blog, BlogCreationForm form) {
         blog.setTitle(form.getTitle());
         blog.setDescription(form.getDescription());
         blog.setCreationDate(LocalDate.now());
@@ -95,14 +106,14 @@ public class BlogCRUDServiceImpl implements BlogCRUDService {
     }
 
     private Blog getBlogByUserId(Long userId) {
-        User user = userRepository.findById(userId).orElseThrow(EntityNotFoundException::new);
-        return user.getBlog();
+        Optional<User> user = findUserById(userId);
+        if (user.isPresent()) {
+            return user.get().getBlog();
+        } else {
+            throw new EntityNotFoundException("No user with id " + userId);
+        }
     }
 
-    private User findUserById(Long userId) {
-        return userRepository.findById(userId)
-                .orElseThrow(EntityNotFoundException::new);
-    }
 
     @Override
     public void deleteBlogByUserId(Long userId) {

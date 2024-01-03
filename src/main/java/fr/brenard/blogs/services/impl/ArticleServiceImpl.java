@@ -54,19 +54,14 @@ public class ArticleServiceImpl implements ArticleService {
         article.setUser(user);
         article.setBlog(blog);
 
-        blog.setNumberOfArticles(blog.getNumberOfArticles()+1);
+        updateNumberOfArticles(blog,+1);
 
-        saveBlog(blog);
-        saveArticle(article);
-    }
-
-    private void saveArticle(Article article) {
+        blogRepository.save(blog);
         articleRepository.save(article);
     }
 
-
-    private void saveBlog(Blog blog){
-        blogRepository.save(blog);
+    private void updateNumberOfArticles(Blog blog, int amount){
+        blog.setNumberOfArticles(blog.getNumberOfArticles()+amount);
     }
 
 
@@ -77,9 +72,10 @@ public class ArticleServiceImpl implements ArticleService {
 
         article.setTitle(form.getTitle());
         article.setContent(form.getContent());
+        article.setVisible(form.isVisible());
         article.setLastUpdateDate(LocalDateTime.now());
 
-        saveArticle(article);
+        articleRepository.save(article);
 
     }
 
@@ -91,8 +87,8 @@ public class ArticleServiceImpl implements ArticleService {
     public void deleteArticle(Long articleId) {
         Article article = getArticle(articleId);
         Blog blog = article.getBlog();
-        blog.setNumberOfArticles(blog.getNumberOfArticles()-1);
-        saveBlog(blog);
+        updateNumberOfArticles(blog, -1);
+        blogRepository.save(blog);
         articleRepository.deleteById(articleId);
     }
 }

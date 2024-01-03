@@ -12,7 +12,6 @@ public class BlogValidationServiceImpl implements BlogValidationService {
         if (ForbiddenWordsVerifier.containsForbiddenWords(title)) {
             throw new ForbiddenWordsException("Ce titre contient un mot non autorisé");
         }
-
     }
 
 
