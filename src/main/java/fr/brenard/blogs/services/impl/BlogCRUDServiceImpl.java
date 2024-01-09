@@ -1,12 +1,13 @@
 package fr.brenard.blogs.services.impl;
 
 import fr.brenard.blogs.exceptions.ForbiddenWordsException;
+import fr.brenard.blogs.exceptions.UserNotFoundException;
 import fr.brenard.blogs.models.DTOs.BlogDTO;
 import fr.brenard.blogs.models.entities.Blog;
 import fr.brenard.blogs.models.entities.User;
-import fr.brenard.blogs.models.forms.blogs.BlogCreationForm;
-import fr.brenard.blogs.models.forms.blogs.BlogUpdateForm;
-import fr.brenard.blogs.services.BlogValidationService;
+import fr.brenard.blogs.models.forms.blogs.BlogForm;
+import fr.brenard.blogs.services.SharedService;
+import fr.brenard.blogs.tools.ForbiddenWordsVerifier;
 import fr.brenard.blogs.tools.mappers.BlogMapper;
 import fr.brenard.blogs.repositories.BlogRepository;
 import fr.brenard.blogs.repositories.UserRepository;
@@ -15,21 +16,21 @@ import jakarta.persistence.EntityNotFoundException;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 
+import java.net.URI;
 import java.time.LocalDate;
 import java.util.List;
-import java.util.Optional;
+
 
 @Service
 public class BlogCRUDServiceImpl implements BlogCRUDService {
 
     private final BlogRepository blogRepository;
-    private final UserRepository userRepository;
-    private final BlogValidationService validationService;
+    private final SharedService sharedService;
 
-    public BlogCRUDServiceImpl(BlogRepository blogRepository, UserRepository userRepository, BlogValidationService validationService) {
+
+    public BlogCRUDServiceImpl(BlogRepository blogRepository, UserRepository userRepository, SharedService sharedService) {
         this.blogRepository = blogRepository;
-        this.userRepository = userRepository;
-        this.validationService = validationService;
+        this.sharedService = sharedService;
     }
 
 
@@ -41,76 +42,54 @@ public class BlogCRUDServiceImpl implements BlogCRUDService {
 
     @Override
     public BlogDTO getBlogById(Long id) {
-        try {
-            return blogRepository.findById(id).map(BlogMapper::fromEntity).orElseThrow(EntityNotFoundException::new);
-        } catch (EntityNotFoundException e) {
-            throw new EntityNotFoundException("No blog with id " + id);
-        }
+        return blogRepository.findById(id).map(BlogMapper::fromEntity).orElseThrow(EntityNotFoundException::new);
     }
 
     @Override
-    public ResponseEntity<String> createAndSetupNewBlog(BlogCreationForm form) {
+    public ResponseEntity<String> createNewBlogFromForm(BlogForm form) {
 
         try {
-            Optional<User> user = findUserById(form.getUserId());
+            User blogOwner = sharedService.findUserById(form.getUserId());
+            Blog newBlog = new Blog();
+            blogOwner.setBlog(newBlog);
+            ForbiddenWordsVerifier.verifyTitle(form.getTitle());
+            setUpNewBlogFromForm(newBlog, form);
+            sharedService.saveBlog(newBlog);
+            sharedService.saveUser(blogOwner);
 
-            if (user.isPresent()) {
-                Blog blog = new Blog();
-                user.get().setBlog(blog);
-
-                verifyTitle(form.getTitle());
-
-                setUpNewBlogFromForm(blog, form);
-
-                blogRepository.save(blog);
-                userRepository.save(user.get());
-
-                return ResponseEntity.ok("Blog has been created");
-            } else {
-                return ResponseEntity.badRequest().body("User not found");
-            }
-        }catch (ForbiddenWordsException e){
+            return ResponseEntity.created(getBlogURI(newBlog)).body("Blog created");
+        } catch (ForbiddenWordsException e) {
             return ResponseEntity.badRequest().body("Title contains forbidden words");
+        } catch (UserNotFoundException e) {
+            return ResponseEntity.badRequest().body("User not found");
         }
-
     }
 
-    private void verifyTitle(String title) throws ForbiddenWordsException {
-        validationService.verifyTitle(title);
-    }
-
-    private Optional<User> findUserById(Long userId) {
-        return userRepository.findById(userId);
-    }
-
-    private void setUpNewBlogFromForm(Blog blog, BlogCreationForm form) {
+    private void setUpNewBlogFromForm(Blog blog, BlogForm form) {
         blog.setTitle(form.getTitle());
         blog.setDescription(form.getDescription());
         blog.setCreationDate(LocalDate.now());
         blog.setNumberOfArticles(0);
     }
 
+    private URI getBlogURI(Blog blog) {
+        return URI.create("/blogs/" + blog.getId());
+    }
 
     @Override
-    public ResponseEntity<String> updateBlogInfo(BlogUpdateForm form) {
-        Blog blog = getBlogByUserId(form.getUserId());
+    public ResponseEntity<String> updateBlogInfo(BlogForm form) {
+
         try {
-            validationService.verifyTitle(form.getTitle());
-            blog.setTitle(form.getTitle());
-            blog.setDescription(form.getDescription());
-            blogRepository.save(blog);
+            Blog blogToUpdate = sharedService.findBlogById(form.getUserId());
+            ForbiddenWordsVerifier.verifyTitle(form.getTitle());
+            blogToUpdate.setTitle(form.getTitle());
+            blogToUpdate.setDescription(form.getDescription());
+            sharedService.saveBlog(blogToUpdate);
             return ResponseEntity.ok("Blog updated!");
         } catch (ForbiddenWordsException exception) {
             return ResponseEntity.badRequest().body(exception.getMessage());
-        }
-    }
-
-    private Blog getBlogByUserId(Long userId) {
-        Optional<User> user = findUserById(userId);
-        if (user.isPresent()) {
-            return user.get().getBlog();
-        } else {
-            throw new EntityNotFoundException("No user with id " + userId);
+        } catch (EntityNotFoundException e) {
+            return ResponseEntity.badRequest().body("No blog with id " + form.getUserId());
         }
     }
 

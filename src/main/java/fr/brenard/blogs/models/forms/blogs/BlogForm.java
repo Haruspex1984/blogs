@@ -7,5 +7,6 @@ public abstract class BlogForm {
 
     private Long userId;
     private String title;
+    private String description;
 
 }

@@ -1,5 +1,6 @@
 package fr.brenard.blogs.tools;
 
+import fr.brenard.blogs.exceptions.ForbiddenWordsException;
 import org.springframework.stereotype.Component;
 
 import java.io.File;
@@ -17,9 +18,13 @@ public class ForbiddenWordsVerifier {
         initializeForbiddenWordsList();
     }
 
+    public static void verifyTitle(String title) throws ForbiddenWordsException {
+        if (ForbiddenWordsVerifier.containsForbiddenWords(title)) {
+            throw new ForbiddenWordsException("Unauthorized title");
+        }
+    }
 
-
-    public static boolean containsForbiddenWords(String content) {
+    private static boolean containsForbiddenWords(String content) {
         String[] forbiddenWords = content.split("\\s+");
         for (String word : forbiddenWords) {
             if (forbiddenWordsList.contains(word.toLowerCase()))

@@ -35,7 +35,7 @@ public class BlogController {
 
     @PostMapping("/create")
     public ResponseEntity<String> createBlog(@RequestBody @Valid BlogCreationForm form) {
-        return blogCRUDService.createAndSetupNewBlog(form);
+        return blogCRUDService.createNewBlogFromForm(form);
     }
 
     @PatchMapping("/{userId}/update")
