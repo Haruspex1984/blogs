@@ -9,8 +9,8 @@ import fr.brenard.blogs.repositories.ArticleRepository;
 import fr.brenard.blogs.repositories.BlogRepository;
 import fr.brenard.blogs.repositories.UserRepository;
 import fr.brenard.blogs.services.ArticleService;
+import fr.brenard.blogs.services.SharedService;
 import fr.brenard.blogs.tools.mappers.ArticleMapper;
-import jakarta.persistence.EntityNotFoundException;
 import org.springframework.stereotype.Service;
 
 import java.time.LocalDateTime;
@@ -22,11 +22,13 @@ public class ArticleServiceImpl implements ArticleService {
     private final ArticleRepository articleRepository;
     private final UserRepository userRepository;
     private final BlogRepository blogRepository;
+    private final SharedService sharedService;
 
-    public ArticleServiceImpl(ArticleRepository articleRepository, UserRepository userRepository, BlogRepository blogRepository) {
+    public ArticleServiceImpl(ArticleRepository articleRepository, UserRepository userRepository, BlogRepository blogRepository, SharedService sharedService) {
         this.articleRepository = articleRepository;
         this.userRepository = userRepository;
         this.blogRepository = blogRepository;
+        this.sharedService = sharedService;
     }
 
     @Override
@@ -40,55 +42,57 @@ public class ArticleServiceImpl implements ArticleService {
     }
 
     @Override
-    public void createAndSetUpNewArticle(ArticleForm form, Long userId) {
-
-        User user = userRepository.findById(userId).orElseThrow(EntityNotFoundException::new);
-        Blog blog = user.getBlog();
+    public void createNewArticle(ArticleForm form) {
 
         Article article = new Article();
+        User user = sharedService.getUserById(form.getUserId());
+        Blog blog = user.getBlog();
 
+        article.setBlog(blog);
+
+        setUpNewArticle(article, form);
+
+        updateNumberOfArticles(blog, +1);
+
+        sharedService.saveArticle(article);
+        sharedService.saveBlog(blog);
+    }
+
+    private void setUpNewArticle(Article article, ArticleForm form) {
         article.setTitle(form.getTitle());
         article.setContent(form.getContent());
         article.setVisible(form.isVisible());
         article.setCreationDate(LocalDateTime.now());
-        article.setUser(user);
-        article.setBlog(blog);
-
-        updateNumberOfArticles(blog,+1);
-
-        blogRepository.save(blog);
-        articleRepository.save(article);
+        article.setUser(sharedService.getUserById(form.getUserId()));
     }
 
-    private void updateNumberOfArticles(Blog blog, int amount){
-        blog.setNumberOfArticles(blog.getNumberOfArticles()+amount);
+
+    private void updateNumberOfArticles(Blog blog, int amount) {
+        blog.setNumberOfArticles(blog.getNumberOfArticles() + amount);
     }
 
 
     @Override
     public void updateArticle(ArticleForm form, Long articleId) {
 
-        Article article = getArticle(articleId);
+        Article article = sharedService.getArticleById(articleId);
 
         article.setTitle(form.getTitle());
         article.setContent(form.getContent());
         article.setVisible(form.isVisible());
         article.setLastUpdateDate(LocalDateTime.now());
 
-        articleRepository.save(article);
+        sharedService.saveArticle(article);
 
     }
 
-    private Article getArticle(Long articleId) {
-        return articleRepository.findById(articleId).orElseThrow(EntityNotFoundException::new);
-    }
 
     @Override
     public void deleteArticle(Long articleId) {
-        Article article = getArticle(articleId);
+        Article article = sharedService.getArticleById(articleId);
         Blog blog = article.getBlog();
         updateNumberOfArticles(blog, -1);
-        blogRepository.save(blog);
         articleRepository.deleteById(articleId);
+        sharedService.saveBlog(blog);
     }
 }

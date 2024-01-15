@@ -8,6 +8,7 @@ import fr.brenard.blogs.repositories.ArticleRepository;
 import fr.brenard.blogs.repositories.BlogRepository;
 import fr.brenard.blogs.repositories.UserRepository;
 import fr.brenard.blogs.services.SharedService;
+import jakarta.persistence.EntityNotFoundException;
 import org.springframework.stereotype.Service;
 
 @Service
@@ -40,18 +41,25 @@ public class SharedServiceImpl implements SharedService {
     }
 
     @Override
-    public User findUserById(Long id) {
+    public User getUserById(Long id) {
         return userRepository.findById(id)
                 .orElseThrow(() -> new UserNotFoundException("User not found with ID: " + id));
     }
 
     @Override
-    public Blog findBlogById(Long id) {
-        User user = findUserById(id);
+    public Blog getBlogById(Long id) {
+        User user = getUserById(id);
         try{
             return user.getBlog();
         } catch (UserNotFoundException e){
             throw new UserNotFoundException("User not found with ID: " + id);
         }
     }
+
+    @Override
+    public Article getArticleById(Long id) {
+        return articleRepository.findById(id).orElseThrow(EntityNotFoundException::new);
+    }
+
+
 }

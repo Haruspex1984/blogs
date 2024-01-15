@@ -1,13 +1,11 @@
 package fr.brenard.blogs.controllers;
 
 import fr.brenard.blogs.models.DTOs.ArticleDTO;
-import fr.brenard.blogs.models.entities.Article;
 import fr.brenard.blogs.models.forms.ArticleForm;
 import fr.brenard.blogs.services.ArticleService;
 import jakarta.transaction.Transactional;
 import jakarta.validation.Valid;
 import org.springframework.http.HttpStatus;
-import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
@@ -38,7 +36,7 @@ public class ArticleController {
     @PostMapping("/{userId}/newArticle")
     @ResponseStatus(HttpStatus.CREATED)
     public void createAndSetUpNewArticle(@RequestBody @Valid ArticleForm form, @PathVariable Long userId) {
-        articleService.createAndSetUpNewArticle(form, userId);
+        articleService.createNewArticle(form);
     }
 
     @PatchMapping("/{articleId}/update")

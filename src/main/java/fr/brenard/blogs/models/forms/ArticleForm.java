@@ -12,6 +12,7 @@ public class ArticleForm {
     private String title;
     @NotBlank
     private String content;
+    private Long userId;
     private boolean visible;
 
 }

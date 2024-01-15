@@ -10,7 +10,6 @@ import fr.brenard.blogs.services.SharedService;
 import fr.brenard.blogs.tools.ForbiddenWordsVerifier;
 import fr.brenard.blogs.tools.mappers.BlogMapper;
 import fr.brenard.blogs.repositories.BlogRepository;
-import fr.brenard.blogs.repositories.UserRepository;
 import fr.brenard.blogs.services.BlogCRUDService;
 import jakarta.persistence.EntityNotFoundException;
 import org.springframework.http.ResponseEntity;
@@ -28,7 +27,7 @@ public class BlogCRUDServiceImpl implements BlogCRUDService {
     private final SharedService sharedService;
 
 
-    public BlogCRUDServiceImpl(BlogRepository blogRepository, UserRepository userRepository, SharedService sharedService) {
+    public BlogCRUDServiceImpl(BlogRepository blogRepository, SharedService sharedService) {
         this.blogRepository = blogRepository;
         this.sharedService = sharedService;
     }
@@ -49,7 +48,7 @@ public class BlogCRUDServiceImpl implements BlogCRUDService {
     public ResponseEntity<String> createNewBlogFromForm(BlogForm form) {
 
         try {
-            User blogOwner = sharedService.findUserById(form.getUserId());
+            User blogOwner = sharedService.getUserById(form.getUserId());
             Blog newBlog = new Blog();
             blogOwner.setBlog(newBlog);
             ForbiddenWordsVerifier.verifyTitle(form.getTitle());
@@ -80,14 +79,14 @@ public class BlogCRUDServiceImpl implements BlogCRUDService {
     public ResponseEntity<String> updateBlogInfo(BlogForm form) {
 
         try {
-            Blog blogToUpdate = sharedService.findBlogById(form.getUserId());
+            Blog blogToUpdate = sharedService.getBlogById(form.getUserId());
             ForbiddenWordsVerifier.verifyTitle(form.getTitle());
             blogToUpdate.setTitle(form.getTitle());
             blogToUpdate.setDescription(form.getDescription());
             sharedService.saveBlog(blogToUpdate);
             return ResponseEntity.ok("Blog updated!");
         } catch (ForbiddenWordsException exception) {
-            return ResponseEntity.badRequest().body(exception.getMessage());
+            return ResponseEntity.badRequest().body("Forbidden words in title");
         } catch (EntityNotFoundException e) {
             return ResponseEntity.badRequest().body("No blog with id " + form.getUserId());
         }

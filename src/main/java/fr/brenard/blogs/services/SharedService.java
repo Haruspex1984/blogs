@@ -8,7 +8,8 @@ public interface SharedService {
     void saveBlog(Blog blog);
     void saveUser(User user);
     void saveArticle(Article article);
-    User findUserById(Long id);
-    Blog findBlogById(Long id);
+    User getUserById(Long id);
+    Blog getBlogById(Long id);
+    Article getArticleById(Long id);
 
 }
