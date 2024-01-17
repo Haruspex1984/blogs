@@ -1,4 +1,4 @@
-package fr.brenard.blogs.models.forms;
+package fr.brenard.blogs.models.forms.articles;
 
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.Size;

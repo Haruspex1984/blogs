@@ -1,7 +1,7 @@
 package fr.brenard.blogs.controllers;
 
 import fr.brenard.blogs.models.DTOs.ArticleDTO;
-import fr.brenard.blogs.models.forms.ArticleForm;
+import fr.brenard.blogs.models.forms.articles.ArticleForm;
 import fr.brenard.blogs.services.ArticleService;
 import jakarta.transaction.Transactional;
 import jakarta.validation.Valid;

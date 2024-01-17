@@ -4,7 +4,7 @@ import fr.brenard.blogs.models.DTOs.ArticleDTO;
 import fr.brenard.blogs.models.entities.Article;
 import fr.brenard.blogs.models.entities.Blog;
 import fr.brenard.blogs.models.entities.User;
-import fr.brenard.blogs.models.forms.ArticleForm;
+import fr.brenard.blogs.models.forms.articles.ArticleForm;
 import fr.brenard.blogs.repositories.ArticleRepository;
 import fr.brenard.blogs.repositories.BlogRepository;
 import fr.brenard.blogs.repositories.UserRepository;

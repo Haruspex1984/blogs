@@ -1,7 +1,7 @@
 package fr.brenard.blogs.services;
 
 import fr.brenard.blogs.models.DTOs.ArticleDTO;
-import fr.brenard.blogs.models.forms.ArticleForm;
+import fr.brenard.blogs.models.forms.articles.ArticleForm;
 
 import java.util.List;
 
