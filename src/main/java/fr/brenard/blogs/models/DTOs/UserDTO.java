@@ -14,6 +14,6 @@ public class UserDTO {
     private String username;
     private String emailAddress;
     private LocalDate registerDate;
-    private BlogDTO blogDTO;
+
 
 }

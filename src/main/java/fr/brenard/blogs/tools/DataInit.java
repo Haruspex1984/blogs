@@ -24,7 +24,7 @@ public class DataInit implements InitializingBean {
 
 
     @Override
-    public void afterPropertiesSet() throws Exception {
+    public void afterPropertiesSet(){
 
         Set<String> roles = new HashSet<>();
         roles.add("ADMIN");
